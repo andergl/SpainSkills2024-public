@@ -1,7 +1,10 @@
 # Máquinas destino
 
 - Hay que configurar la red, las máquinas destino tienen que tener una IP conocida y accesible desde la máquina ansible.
-- Si es necesario, crear los usuarios van a conectarse y ejecutar acciones mediante ansible.
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/b4bcecea-025b-4996-af97-6028057245bb)
+
+
+- Hay que crear los usuarios que van a conectarse y ejecutar acciones mediante ansible.
 ```sh
 adduser ansible
 ```
