@@ -1,7 +1,12 @@
+
+
 # Máquinas destino
 
 - Hay que configurar la red, las máquinas destino tienen que tener una IP conocida y accesible desde la máquina ansible.
-![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/b4bcecea-025b-4996-af97-6028057245bb)
+Vamos a suponer que tenemos dos servidores destino, srv01 (192.168.39.101) y srv02 (192.168.39.102).
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/9ee97c09-eb46-440b-a28c-f3a1827a8f18)
+
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/861e06bd-c968-47d9-8516-5e772d57f8df)
 
 
 - Hay que crear los usuarios que van a conectarse y ejecutar acciones mediante ansible.
