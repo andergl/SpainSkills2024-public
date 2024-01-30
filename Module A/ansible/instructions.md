@@ -10,12 +10,14 @@ Vamos a suponer que tenemos dos servidores destino, srv01 (192.168.39.101) y srv
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/861e06bd-c968-47d9-8516-5e772d57f8df)
 
 
-- Hay que crear los usuarios que van a conectarse y ejecutar acciones mediante ansible.
+- En ambas máquinas destino, hay que crear los usuarios que van a conectarse y ejecutar acciones mediante ansible. En nuestro caso, crearemos un usuario llamado "ansible":
 ```sh
 adduser ansible
 ```
 
-- Si es necesario, se puede incluir a estos usuarios en /etc/sudoers, y permitir que puedan ejecutar sudo sin que te pida contraseña:
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/4e18ea61-53fd-48cc-9034-894bf9d21e13)
+
+- Incluiremos a este usuario en /etc/sudoers, y permitiremos que pueda ejecutar sudo sin que te pida contraseña:
 ```sh
 nano /etc/sudoers
 ```
@@ -27,18 +29,26 @@ ansible ALL=(ALL) NOPASSWD:ALL
 ...
 ```
   
-- Instalar SSH y habilitar acceso a los usuarios que van a conectarse y ejecutar acciones mediante ansible (o deshabilitar acceso a los que no se vayan a conectar).
+- Instalamos SSH y habilitamos acceso al usuario que va a conectarse y ejecutar acciones mediante ansible (o deshabilitamos el acceso a los que no se vayan a conectar).
 
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/12b6942a-dd12-4992-b8bb-259e65939fc9)
 
 # Máquina ansible
+- Vamos a suponer que la máquina desde la que se va a trabajar se llama ansiblesrv y que su IP es 192.168.39.1
+
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/e7a769a3-e9fb-455e-b5f4-bc66c88a565a)
+
+- Probamos que podemos conectarnos a las máquinas destino mediante SSH, utilizando el usuario "ansible":
+
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/f1246e32-4717-4c66-ad84-957911acac72)
 
 
-Instalación:
+- Instalamos ansible:
 ```sh
 apt install ansible
 ```
 
-Configuración inicial:
+- Configuración inicial:
 ```sh
 mkdir /etc/ansible
 ```
@@ -47,7 +57,7 @@ mkdir /etc/ansible
 nano /etc/ansible/ansible.cfg
 ```
 
-Para ejecutar acciones en las máquinas remotas directamente como root:
+- Podríamos configurarlo para ejecutar acciones en las máquinas remotas directamente como root:
 ```sh
 [defaults]
 
@@ -59,7 +69,7 @@ become_user=root
 become_ask_pass=False
 ```
 
-Para ejecutar acciones en las máquinas remotas como otro usuario (por ejemplo, utilizando el usuario "ansible"):
+- Pero en este caso , lo vamos a configurar para ejecutar acciones en las máquinas remotas como otro usuario (por ejemplo, utilizando el usuario "ansible"):
 ```sh
 [defaults]
 
@@ -71,13 +81,13 @@ become_user=root
 become_ask_pass=False
 ```
 
-Aplicar la configuración:
+- Aplicamos la configuración:
 ```sh
 export ANSIBLE_CONFIG=/root/ansible/ansible.cfg
 echo "export ANSIBLE_CONFIG=/root/ansible/ansible.cfg" >> ~/.profile
 source ~/.profile
 ```
-Comprobar la versión y las rutas de los archivos de configuración:
+- Comprobamos la versión y las rutas de los archivos de configuración:
 ```sh
 ansible --version
 ```
@@ -91,41 +101,37 @@ executable location = /usr/bin/ansible
 python version = 3.9.2 (default, Feb 28 2021, 17:03:44) [GCC 10.2.1 20210110]
 ```
 
-Habilitar acceso SSH por clave pública. Primero generamos el par de claves:
+- Para habilitar el acceso SSH por clave pública y que no solicite password, primero generamos el par de claves:
 ```sh
 ssh-keygen
 ```
-Y copiamos la clave pública en los hosts de destino, bien como root (se almacena en el archivo /root/.ssh/authorized_keys de la máquina destino):
+- Y copiamos la clave pública en los hosts de destino, podríamos hacerlo como root (la clave pública se almacena en el archivo /root/.ssh/authorized_keys de la máquina destino):
 ```sh
-ssh-copy-id -i /root/.ssh/id_rsa.pub root@10.0.2.25
-ssh-copy-id -i /root/.ssh/id_rsa.pub root@10.0.2.26
-ssh-copy-id -i /root/.ssh/id_rsa.pub root@10.0.2.27
+ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.39.101
+ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.39.102
 ```
 
-O bien como otro usuario, por ejemplo, "ansible" (se almacena en el archivo /home/ansible/.ssh/authorized_keys de la máquina destino):
+- Pero nosotros lo haremos como otro usuario, por ejemplo, "ansible" (la clave pública se almacena en el archivo /home/ansible/.ssh/authorized_keys de la máquina destino):
 ```sh
-ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@10.0.2.25
-ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@10.0.2.26
-ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@10.0.2.27
+ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@192.168.39.101
+ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@192.168.39.102
 ```
 
-
-Podemos crear un inventario:
+- Ahora podemos crear un inventario de máquinas:
 ```sh
 nano /etc/ansible/hosts
 ```
-Este inventario puede estar en formato INI:
+- Este inventario puede estar en formato INI:
 ```sh
 #Se puede definir un grupo
 [servers]
 #Alias y dirección IP
-server01 ansible_hostname=server01 ansible_host=10.0.2.25
-server02 ansible_hostname=server02 ansible_host=10.0.2.26
-server03 ansible_hostname=server03 ansible_host=10.0.2.27
+srv01 ansible_hostname=srv01 ansible_host=192.168.39.101
+srv02 ansible_hostname=srv02 ansible_host=192.168.39.102
 
 [otros]
 #También se pueden poner IPs directamente
-10.0.2.30
+192.168.39.105
 #O nombres de dominio
 client07.skills.org
 ```
@@ -135,47 +141,39 @@ O puede estar en formato YAML:
 all:
   #Se definen las máquinas
   hosts:
-    server01:
-      ansible_host: 10.0.2.25
-      hostname: "server01"
-    server02:
-      ansible_host: 10.0.2.26
-      hostname: "server02"
-    server03:
-      ansible_host: 10.0.2.27
-      hostname: "server03"
+    srv01:
+      ansible_host: 192.168.39.101
+      hostname: "srv01"
+    srv02:
+      ansible_host: 192.168.39.102
+      hostname: "srv02"
   children:
     #Se puede definir un grupo
     servers:
       hosts:
-        server01:
-        server02:
-        server03:
+        srv01:
+        srv02:
 ```
 
-Y ya se pueden enviar ordenes, como por ejemplo, una orden a un equipo:
+- Y ya se pueden enviar ordenes, como por ejemplo, una orden a un equipo:
 ```sh
-ansible -m shell -a "cat /etc/hosts" server01
+ansible -m shell -a "ip -c a show enp0s3" srv01
 ```
-![](images/ansible01.png)
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/21fadc87-0b49-4a99-bcb7-cf67d2be5841)
 
-Una orden con el comando sudo:
+- Una orden con el comando sudo:
 ```sh
-ansible -m shell -a "sudo cat /etc/shadow" server01
-
-O una orden a varios equipos a la vez:
-```sh
-ansible -m shell -a "ip -c a show dev enp0s3" servers
+ansible -m shell -a "sudo cat /etc/shadow | grep ansi" srv02
 ```
-![](images/ansible02.png)
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/4f35f5ec-7f66-46a0-96ca-55517523aa5b)
+
+- O una orden a varios equipos a la vez:
+```sh
+ansible -m shell -a "ip -c a show enp0s3" servers
+```
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/8c10e53c-d9bc-4a6f-adc7-326c2f23aa10)
 
 
-
-![](images/ansible03.png)
-
-
-
-![](images/ansible04.png)
 
 ```sh
 
