@@ -173,19 +173,30 @@ ansible -m shell -a "ip -c a show enp0s3" servers
 ```
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/8c10e53c-d9bc-4a6f-adc7-326c2f23aa10)
 
-
+- Y podemos crear un playbook para probar conectividad (ping) con las másquinas en formato YAML:
 
 ```sh
-
+nano /etc/ansible/ping_all.yml
 ```
 
 ```sh
-
+#/etc/ansible/ping_all.yml
+- name: Testing
+  hosts: servers
+  tasks:
+  - name: ping
+    ping:
+  - name: output
+    debug:
+      msg: "{{ hostname }}"
 ```
-
+- Y podemos ejecutarlo con el comando "ansible-playbook" desde el directorio en el que está ubicado el archivo:
 ```sh
-
+ansible-playbook ping_all.yml
 ```
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/66c442ee-5c51-40f8-99a4-82e6b832a350)
+
+
 
 ```sh
 
