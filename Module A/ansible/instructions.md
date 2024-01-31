@@ -213,19 +213,46 @@ ansible-playbook ping_all.yml
 ```sh
 
 ```
+# Instalar servidor web apache2
 
+
+
+- En la máquina ansiblesrv, nos ubicamos en el directorio en el que van a estar los playbooks, en nuestro caso, /etc/ansible:
 ```sh
-
+cd /etc/ansible
 ```
 
+- Creamos un playbook llamado apache-install.yml en el directorio /etc/ansible:
 
 ```sh
-
+nano apache-install.yml
 ```
+- Con el siguiente contenido
 
 ```sh
+ name: Install Apache
+  hosts: servers
+  become: true
 
+  tasks:
+  - name: Install Apache
+    apt:
+      name: apache2
+      state: present
+
+  - name: Start Apache
+    service:
+      name: apache2
+      state: started
+      enabled: yes
 ```
+- Y lo ejecutamos:
+```sh
+ansible-playbook apache-install.yml
+```
+
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/35bc7446-ab29-4ba3-bf28-26a4b326afa9)
+
 
 ```sh
 
