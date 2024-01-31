@@ -45,7 +45,7 @@ ansible ALL=(ALL) NOPASSWD:ALL
 
 - Volvemos a la máquina ansiblesrv:
 
-![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/b6fb0eba-53fe-4698-9f13-090aa823673d)
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/ba095762-4bdb-4476-b28a-4f749544ee8b)
 
 - Instalamos ansible:
 ```sh
