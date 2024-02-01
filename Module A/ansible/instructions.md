@@ -61,19 +61,7 @@ mkdir /etc/ansible
 nano /etc/ansible/ansible.cfg
 ```
 
-- Podríamos configurarlo para ejecutar acciones en las máquinas remotas directamente como root:
-```sh
-[defaults]
-
-inventory=/etc/ansible/hosts
-remote_user=root
-host_key_checking=False
-become=True
-become_user=root
-become_ask_pass=False
-```
-
-- Pero en este caso , lo vamos a configurar para ejecutar acciones en las máquinas remotas como otro usuario (por ejemplo, utilizando el usuario "ansible"):
+- Lo vamos a configurar para ejecutar acciones en las máquinas remotas como un usuario (por ejemplo, utilizando el usuario "ansible"):
 ```sh
 [defaults]
 
@@ -85,12 +73,6 @@ become_user=root
 become_ask_pass=False
 ```
 
-- Aplicamos la configuración:
-```sh
-export ANSIBLE_CONFIG=/root/ansible/ansible.cfg
-echo "export ANSIBLE_CONFIG=/root/ansible/ansible.cfg" >> ~/.profile
-source ~/.profile
-```
 - Comprobamos la versión y las rutas de los archivos de configuración:
 ```sh
 ansible --version
@@ -109,13 +91,8 @@ python version = 3.9.2 (default, Feb 28 2021, 17:03:44) [GCC 10.2.1 20210110]
 ```sh
 ssh-keygen
 ```
-- Y copiamos la clave pública en los hosts de destino, podríamos hacerlo como root (la clave pública se almacena en el archivo /root/.ssh/authorized_keys de la máquina destino):
-```sh
-ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.39.101
-ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.39.102
-```
 
-- Pero nosotros lo haremos como otro usuario, por ejemplo, "ansible" (la clave pública se almacena en el archivo /home/ansible/.ssh/authorized_keys de la máquina destino):
+- Y copiamos la clave pública en los hosts de destino utilizando el usuario que hemos credo en las máquinas destino y que hemos configurado en el archivo /etc/ansible/ansible.cfg. En nuestro caso, el usuario "ansible" (la clave pública se almacena en el archivo /home/ansible/.ssh/authorized_keys de la máquina destino):
 ```sh
 ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@192.168.39.101
 ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@192.168.39.102
@@ -230,7 +207,7 @@ nano apache-install.yml
 - Con el siguiente contenido
 
 ```sh
- name: Install Apache
+- name: Install Apache
   hosts: servers
   become: true
 
