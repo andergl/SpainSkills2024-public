@@ -358,7 +358,7 @@ nano apache-config.yml
 ```sh
 ansible-playbook apache-config.yml
 ```
-<img width="700" alt="Captura de pantalla 2024-02-02 a las 13 01 56" src="https://github.com/andergl/SpainSkills2024-public/assets/15244568/15bb97ba-306b-4f23-ad32-b92d4eba2936">
+<img width="630" alt="Captura de pantalla 2024-02-02 a las 13 01 56" src="https://github.com/andergl/SpainSkills2024-public/assets/15244568/15bb97ba-306b-4f23-ad32-b92d4eba2936">
 
 - Probamos desde un navegador:
 ```sh
