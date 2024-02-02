@@ -364,10 +364,9 @@ ansible-playbook apache-config.yml
 ```sh
 http://server_host o IP
 ```
-<img width="811" alt="Captura de pantalla 2024-02-02 a las 13 13 06" src="https://github.com/andergl/SpainSkills2024-public/assets/15244568/2f13ae4b-bbba-4422-8bb5-015020c91e94">
+<img width="811" alt="Captura de pantalla 2024-02-02 a las 13 20 59" src="https://github.com/andergl/SpainSkills2024-public/assets/15244568/fc55d01d-b750-4487-8ca3-9119e6cfd8ba">
 
-<img width="810" alt="Captura de pantalla 2024-02-02 a las 13 13 24" src="https://github.com/andergl/SpainSkills2024-public/assets/15244568/f802c9dc-18d9-472b-8ef9-deb76bbc2cc8">
-
+<img width="811" alt="Captura de pantalla 2024-02-02 a las 13 21 19" src="https://github.com/andergl/SpainSkills2024-public/assets/15244568/9e6045fa-e698-4ce6-9995-fb7b0221b027">
 
 
 
