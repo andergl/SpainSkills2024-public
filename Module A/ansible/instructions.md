@@ -358,3 +358,5 @@ nano apache-config.yml
 ```sh
 ansible-playbook apache-config.yml
 ```
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/15244568/fd996a27-a03a-4997-9b50-b34142065459)
+
