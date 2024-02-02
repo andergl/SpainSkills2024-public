@@ -284,3 +284,77 @@ nano apache.conf
   CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 ```
+- Creamos el index.html para nuestro VirtualHost:
+```sh
+cd /etc/ansible/apache/files
+nano index.html
+```
+
+```sh
+#/etc/ansible/apache/files/index.html
+<html lang="es">
+  <head>
+    <title>Bienvenido a {{ http_host }}!!</title>
+    <meta charset="UTF-8"/>
+  </head>
+  <body>
+    <h1>CORRECTO! El {{ http_host }} virtual está funcionando en el servidor {{ hostname }}!</h1>
+  </body>
+</html>
+```
+- Creamos un playbook llamado apache-config.yml en el directorio /etc/ansible/apache:
+
+```sh
+nano apache-config.yml
+```
+- Con el siguiente contenido
+
+```sh
+- name: Apache configuration
+  hosts: servers
+  become: true
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+    - name: Create document root
+      file:
+        path: "/var/www/{{ http_host }}"
+        state: directory
+        owner: "{{ app_user }}"
+        mode: '0755'
+
+    - name: Copy index test page
+      template:
+        src: "files/index.html"
+        dest: "/var/www/{{ http_host }}/index.html" 
+
+    - name: Set up Apache VirtualHost
+      template:
+        src: "files/apache.conf"
+        dest: "/etc/apache2/sites-available/{{ http_conf }}"
+
+    - name: Enable new site
+      shell: /usr/sbin/a2ensite {{ http_conf }}
+      notify: Reload Apache
+
+    - name: Disable default Apache site
+      shell: /usr/sbin/a2dissite 000-default.conf
+      when: disable_default
+      notify: Reload Apache
+
+  handlers:
+    - name: Reload Apache
+      service:
+        name: apache2
+        state: reloaded
+
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
+```
+- Y lo ejecutamos:
+```sh
+ansible-playbook apache-config.yml
+```
