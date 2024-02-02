@@ -187,9 +187,32 @@ ansible-playbook ping_all.yml
 
 ```
 
-```sh
 
+# Cambiar hostname
+- Para cambiar el hostname de varios equipos y , podemos usar el siguiente playbook:
+
+```sh
+nano hostname.yml
 ```
+
+- El playbook renombra cada equipo con el nombre {{ hostname }} que tiene definido en el archivo /etc/ansible/hosts. Esto modifica el contenido del archivo /etc/hostname de las máquinas destino. No es obligatorio, pero como el cambio no se refleja en el prompt hasta el siguiente reinicio, reinicia las máquinas:
+
+```sh
+- name: "Change hostname"
+  hosts: "servers"
+
+  tasks:
+
+    - name: Set hostname
+      hostname:
+        name: "{{ hostname }}"
+      become: true
+
+    - name: "Reinicio"
+      reboot:
+      become: true
+```
+
 # Instalar servidor web apache2
 
 
