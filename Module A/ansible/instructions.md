@@ -231,26 +231,56 @@ ansible-playbook apache-install.yml
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/35bc7446-ab29-4ba3-bf28-26a4b326afa9)
 
 
-```sh
+# Configurar servidor web apache2 (creación de un VirtualHost)
 
+- En la máquina ansiblesrv, nos ubicamos en el directorio en el que van a estar los playbooks, en nuestro caso, /etc/ansible:
+```sh
+cd /etc/ansible
+```
+
+- Creamos un un directorio que contenga los playbooks y los ficheros de configuración de apache:
+```sh
+mkdir apache
+```
+
+- Movemos el playbook de instalación a este directorio:
+```sh
+mv apache-install.yml apache
+```
+- Creamos la estructura que contendrá los ficheros de configuración del apache:
+```sh
+mkdir files
+mkdir vars
+```
+- Creamos el fichero para las variables a utilizar en la configuración de nuestro sitio:
+```sh
+cd vars
+nano default.yml
 ```
 
 ```sh
-
+#/etc/ansible/apache/vars/default.yml
+---
+app_user: "ansible"
+http_host: "misite"
+http_conf: "misite.conf"
+http_port: "80"
+disable_default: true
+```
+- Creamos el fichero de configuración de apache para crear el VirtualHost:
+```sh
+cd /etc/ansible/apache/files
+nano apache.conf
 ```
 
 ```sh
-
-```
-
-```sh
-
-```
-
-```sh
-
-```
-
-```sh
-
+#/etc/ansible/apache/files/apache.conf
+<VirtualHost *:{{ http_port }}>
+  ServerAdmin webmaster@localhost
+  ServerName {{ http_host }}
+  ServerAlias www.{{ http_host }}
+  DocumentRoot /var/www/{{ http_host }}
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
 ```
