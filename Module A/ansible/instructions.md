@@ -1,6 +1,6 @@
+# Configuración inicial de las máquinas
 
-
-# Máquinas destino
+## Máquinas destino
 
 - Hay que configurar la red, las máquinas destino tienen que tener una IP conocida y accesible desde la máquina ansible.
 Vamos a suponer que tenemos dos servidores destino, srv01 (192.168.39.101) y srv02 (192.168.39.102).
@@ -33,7 +33,7 @@ ansible ALL=(ALL) NOPASSWD:ALL
 
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/12b6942a-dd12-4992-b8bb-259e65939fc9)
 
-# Máquina ansible
+## Máquina ansible
 - Vamos a suponer que la máquina desde la que se va a trabajar se llama ansiblesrv y que su IP es 192.168.39.1
 
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/e7a769a3-e9fb-455e-b5f4-bc66c88a565a)
@@ -188,7 +188,8 @@ ansible-playbook ping_all.yml
 ```
 
 
-# Cambiar hostname
+# Tareas de ejemplo
+## Cambiar hostname
 - Para cambiar el hostname de varios equipos y , podemos usar el siguiente playbook:
 
 ```sh
@@ -213,7 +214,7 @@ nano hostname.yml
       become: true
 ```
 
-# Instalar servidor web apache2
+## Instalar servidor web apache2
 
 
 
@@ -254,7 +255,7 @@ ansible-playbook apache-install.yml
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/35bc7446-ab29-4ba3-bf28-26a4b326afa9)
 
 
-# Configurar servidor web apache2 (creación de un VirtualHost)
+## Configurar servidor web apache2 (creación de un VirtualHost)
 
 - En la máquina ansiblesrv, nos ubicamos en el directorio en el que van a estar los playbooks, en nuestro caso, /etc/ansible:
 ```sh
