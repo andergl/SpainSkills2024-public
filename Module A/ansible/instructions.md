@@ -1,6 +1,6 @@
-# Configuración inicial de las máquinas
+# 1. Configuración inicial de las máquinas
 
-## Máquinas destino
+## 1.1. Máquinas destino
 
 - Hay que configurar la red, las máquinas destino tienen que tener una IP conocida y accesible desde la máquina ansible.
 Vamos a suponer que tenemos dos servidores destino, srv01 (192.168.39.101) y srv02 (192.168.39.102).
@@ -33,12 +33,12 @@ ansible ALL=(ALL) NOPASSWD:ALL
 
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/12b6942a-dd12-4992-b8bb-259e65939fc9)
 
-## Máquina ansible
+## 1.2. Máquina ansible
 - Vamos a suponer que la máquina desde la que se va a trabajar se llama ansiblesrv y que su IP es 192.168.39.1
 
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/e7a769a3-e9fb-455e-b5f4-bc66c88a565a)
 
-### SSH mediante clave pública
+### 1.2.1. SSH mediante clave pública
 
 - Probamos que podemos conectarnos a las máquinas destino mediante SSH, utilizando el usuario "ansible":
 
@@ -65,7 +65,7 @@ ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@192.168.39.102
 
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/e05c472f-12e5-4249-b10b-30c23f6acd11)
 
-### Ansible: instalación y configuración
+### 1.2.2. Ansible: instalación y configuración
 
 - La versión de Ansible actual de los repositorios de Debian (ansible 2.10.8) es bastante antigua, por lo que la instalaremos con el rpm de Ubuntu ([aquí]([url](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-debian)) el artículo oficial). Primero hay que instalar wget y gpg:
 ```sh
@@ -83,13 +83,18 @@ sudo apt update && sudo apt install ansible
 ```
 
 
-
-
-- Configuración inicial:
+- Comprobamos la versión y las rutas de los archivos de configuración y listamos el contenido de /etc/ansible:
 ```sh
-mkdir /etc/ansible
-```
+ansible --version
 
+ls -la /etc/ansible/
+```
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/a8e8c83d-4b49-4319-bab9-8542701874d4)
+
+
+- Vemos que tenemos la version ansible 2.12.10. El archivo principal de configuración es /etc/ansible/ansible.cfg y vemos que existe el archivo /etc/ansible/hosts.
+
+- Vamos a editar el archivo /etc/ansible/ansible.cfg para la configuración inicial:
 ```sh
 nano /etc/ansible/ansible.cfg
 ```
@@ -106,22 +111,8 @@ become_user=root
 become_ask_pass=False
 ```
 
-- Comprobamos la versión y las rutas de los archivos de configuración:
-```sh
-ansible --version
-```
 
-```sh
-ansible 2.10.8
-config file = /etc/ansible/ansible.cfg
-configured module search path = ['/root/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
-ansible python module location = /usr/lib/python3/dist-packages/ansible
-executable location = /usr/bin/ansible
-python version = 3.9.2 (default, Feb 28 2021, 17:03:44) [GCC 10.2.1 20210110]
-```
-
-
-- Ahora podemos crear un inventario de máquinas:
+- Ahora podemos crear un inventario de máquinas en el archivo /etc/ansible/hosts:
 ```sh
 nano /etc/ansible/hosts
 ```
@@ -140,7 +131,7 @@ srv02 ansible_hostname=srv02 ansible_host=192.168.39.102
 client07.skills.org
 ```
 
-O puede estar en formato YAML:
+O puede estar en formato YAML (en este ejemplo sólo se añaden los equipos del grupo servers):
 ```sh
 all:
   #Se definen las máquinas
@@ -158,6 +149,8 @@ all:
         srv01:
         srv02:
 ```
+
+### 1.2.3. Prueba funcional
 
 - Y ya se pueden enviar ordenes, como por ejemplo, una orden a un equipo:
 ```sh
@@ -180,11 +173,13 @@ ansible -m shell -a "ip -c a show enp0s3" servers
 - Y podemos crear un playbook para probar conectividad (ping) con las másquinas en formato YAML:
 
 ```sh
-nano /etc/ansible/ping_all.yml
+mkdir /etc/ansible/playbooks
+
+nano /etc/ansible/playbooks/ping_all.yml
 ```
 
 ```sh
-#/etc/ansible/ping_all.yml
+#/etc/ansible/playbooks/ping_all.yml
 - name: Testing
   hosts: servers
   tasks:
@@ -196,23 +191,15 @@ nano /etc/ansible/ping_all.yml
 ```
 - Y podemos ejecutarlo con el comando "ansible-playbook" desde el directorio en el que está ubicado el archivo:
 ```sh
+cd /etc/ansible/playbooks/
+
 ansible-playbook ping_all.yml
 ```
-![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/66c442ee-5c51-40f8-99a4-82e6b832a350)
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/beba4204-b30a-4dca-9831-a402ab18f1df)
 
 
-
-```sh
-
-```
-
-```sh
-
-```
-
-
-# Tareas de ejemplo
-## Cambiar hostname
+# 2. Tareas de ejemplo
+## 2.1. Cambiar hostname
 - Para cambiar el hostname de varios equipos y , podemos usar el siguiente playbook:
 
 ```sh
@@ -237,7 +224,7 @@ nano hostname.yml
       become: true
 ```
 
-## Instalar servidor web apache2
+## 2.2. Instalar servidor web apache2
 
 
 
@@ -278,11 +265,11 @@ ansible-playbook apache-install.yml
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/35bc7446-ab29-4ba3-bf28-26a4b326afa9)
 
 
-## Configurar servidor web apache2 (creación de un VirtualHost)
+## 2.3. Configurar servidor web apache2 (creación de un VirtualHost)
 
 - En la máquina ansiblesrv, nos ubicamos en el directorio en el que van a estar los playbooks, en nuestro caso, /etc/ansible:
 ```sh
-cd /etc/ansible
+cd /etc/ansible/playbooks
 ```
 
 - Creamos un un directorio que contenga los playbooks y los ficheros de configuración de apache:
@@ -306,7 +293,7 @@ nano default.yml
 ```
 
 ```sh
-#/etc/ansible/apache/vars/default.yml
+#/etc/ansible/playbooks/apache/vars/default.yml
 ---
 app_user: "ansible"
 http_host: "misite"
@@ -316,12 +303,12 @@ disable_default: true
 ```
 - Creamos el fichero de configuración de apache para crear el VirtualHost:
 ```sh
-cd /etc/ansible/apache/files
+cd /etc/ansible/playbooks/apache/files
 nano apache.conf
 ```
 
 ```sh
-#/etc/ansible/apache/files/apache.conf
+#/etc/ansible/playbooks/apache/files/apache.conf
 <VirtualHost *:{{ http_port }}>
   ServerAdmin webmaster@localhost
   ServerName {{ http_host }}
@@ -333,12 +320,12 @@ nano apache.conf
 ```
 - Creamos el index.html para nuestro VirtualHost:
 ```sh
-cd /etc/ansible/apache/files
+cd /etc/ansible/playbooks/apache/files
 nano index.html
 ```
 
 ```sh
-#/etc/ansible/apache/files/index.html
+#/etc/ansible/playbooks/apache/files/index.html
 <html lang="es">
   <head>
     <title>Bienvenido a {{ http_host }}!!</title>
@@ -349,7 +336,7 @@ nano index.html
   </body>
 </html>
 ```
-- Creamos un playbook llamado apache-config.yml en el directorio /etc/ansible/apache:
+- Creamos un playbook llamado apache-config.yml en el directorio /etc/ansible/playbooks/apache:
 
 ```sh
 nano apache-config.yml
