@@ -73,7 +73,7 @@ apt install wget gpg
 ```
 - Y después, añadimos el repositorio necesario de Ubuntu e instalamos ansible:
 ```sh
-UBUNTU_CODENAME=jammy
+UBUNTU_CODENAME=focal
 
 wget -O- "https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=get&search=0x6125E2A8C77F2818FB7BD15B93C4A3FD7BB9C367" | sudo gpg --dearmour -o /usr/share/keyrings/ansible-archive-keyring.gpg
 
