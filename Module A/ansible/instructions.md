@@ -38,6 +38,8 @@ ansible ALL=(ALL) NOPASSWD:ALL
 
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/e7a769a3-e9fb-455e-b5f4-bc66c88a565a)
 
+### SSH mediante clave pública
+
 - Probamos que podemos conectarnos a las máquinas destino mediante SSH, utilizando el usuario "ansible":
 
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/f1246e32-4717-4c66-ad84-957911acac72)
@@ -47,10 +49,41 @@ ansible ALL=(ALL) NOPASSWD:ALL
 
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/ba095762-4bdb-4476-b28a-4f749544ee8b)
 
-- Instalamos ansible:
+
+- Vamos a habilitar el acceso SSH a las máquinas srv01 y srv02 desde ansiblesrv por clave pública y que no solicite password. Para ello, primero generamos el par de claves. La clave pública se almacena en /root/.ssh/id_rsa.pub. (Esto significa que el usuario que va a tener que ejecutar las acciones en ansiblesrv es root):
 ```sh
-apt install ansible
+ssh-keygen
 ```
+
+- Y copiamos la clave pública en los hosts de destino utilizando el usuario que hemos credo en las máquinas destino y que hemos configurado en el archivo /etc/ansible/ansible.cfg. En nuestro caso, el usuario "ansible" (la clave pública se almacena en el archivo /home/ansible/.ssh/authorized_keys de la máquina destino), lo que significa que las acciones que se ejecuten en srv01 y srv02 se van a ejecutar con el usuario ansible:
+```sh
+ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@192.168.39.101
+ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@192.168.39.102
+```
+
+- Podemos probar que ahora la conexión SSH es posible y que no nos pide password:
+
+![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/e05c472f-12e5-4249-b10b-30c23f6acd11)
+
+### Ansible: instalación y configuración
+
+- La versión de Ansible actual de los repositorios de Debian (ansible 2.10.8) es bastante antigua, por lo que la instalaremos con el rpm de Ubuntu ([aquí]([url](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-debian)) el artículo oficial). Primero hay que instalar wget y gpg:
+```sh
+apt install wget gpg
+```
+- Y después, añadimos el repositorio necesario de Ubuntu e instalamos ansible:
+```sh
+UBUNTU_CODENAME=jammy
+
+wget -O- "https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=get&search=0x6125E2A8C77F2818FB7BD15B93C4A3FD7BB9C367" | sudo gpg --dearmour -o /usr/share/keyrings/ansible-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/ansible-archive-keyring.gpg] http://ppa.launchpad.net/ansible/ansible/ubuntu $UBUNTU_CODENAME main" | sudo tee /etc/apt/sources.list.d/ansible.list
+
+sudo apt update && sudo apt install ansible
+```
+
+
+
 
 - Configuración inicial:
 ```sh
@@ -87,16 +120,6 @@ executable location = /usr/bin/ansible
 python version = 3.9.2 (default, Feb 28 2021, 17:03:44) [GCC 10.2.1 20210110]
 ```
 
-- Para habilitar el acceso SSH por clave pública y que no solicite password, primero generamos el par de claves:
-```sh
-ssh-keygen
-```
-
-- Y copiamos la clave pública en los hosts de destino utilizando el usuario que hemos credo en las máquinas destino y que hemos configurado en el archivo /etc/ansible/ansible.cfg. En nuestro caso, el usuario "ansible" (la clave pública se almacena en el archivo /home/ansible/.ssh/authorized_keys de la máquina destino):
-```sh
-ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@192.168.39.101
-ssh-copy-id -i /root/.ssh/id_rsa.pub ansible@192.168.39.102
-```
 
 - Ahora podemos crear un inventario de máquinas:
 ```sh
