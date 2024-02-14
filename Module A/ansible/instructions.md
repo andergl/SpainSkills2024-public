@@ -199,7 +199,7 @@ ansible-playbook ping_all.yml
 ```
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/beba4204-b30a-4dca-9831-a402ab18f1df)
 
-### 1.2.3. Entorno de desarrollo
+### 1.2.4. Entorno de desarrollo
 - El entorno de desarrollo que del que se va a disponer está descrito en [https://github.com/andergl/SpainSkills2024-public/blob/main/Module%20A/ansible/ansible-dev-tools.md](https://github.com/andergl/SpainSkills2024-public/blob/main/Module%20A/ansible/ansible-dev-tools.md)
 
 # 2. Tareas de ejemplo
