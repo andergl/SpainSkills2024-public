@@ -204,7 +204,7 @@ ansible-playbook ping_all.yml
 
 # 2. Tareas de ejemplo
 ## 2.1. Cambiar hostname
-- Para cambiar el hostname de varios equipos y , podemos usar el siguiente playbook:
+- Para cambiar el hostname de varios equipos, podemos usar el siguiente playbook:
 
 ```sh
 nano hostname.yml
@@ -213,22 +213,38 @@ nano hostname.yml
 - El playbook renombra cada equipo con el nombre {{ hostname }} que tiene definido en el archivo /etc/ansible/hosts. Esto modifica el contenido del archivo /etc/hostname de las máquinas destino. No es obligatorio, pero como el cambio no se refleja en el prompt hasta el siguiente reinicio, reinicia las máquinas:
 
 ```sh
-- name: "Change hostname"
-  hosts: "servers"
-
+- name: Change hostname
+  hosts: servers
   tasks:
-
     - name: Set hostname
-      hostname:
+      ansible.builtin.hostname:
         name: "{{ hostname }}"
       become: true
-
     - name: "Reinicio"
       reboot:
       become: true
 ```
 
-## 2.2. Instalar servidor web apache2
+## 2.1. Cambiar zona horaria
+- Para cambiar la zona horaria de varios equipos, podemos usar el siguiente playbook:
+
+```sh
+nano timezone.yml
+```
+
+- El playbook modifica la zona horaria de las máquinas, estableciendo, en este ejemplo, la zona horaria Europe/Madrid:
+
+```sh
+- name: Set timezone
+  hosts: servers
+  tasks:
+    - name: Timezone
+      ansible.builtin.timezone:
+        name: Europe/Madrid
+      become: true
+```
+
+## 2.3. Instalar servidor web apache2
 
 
 
@@ -269,7 +285,7 @@ ansible-playbook apache-install.yml
 ![imagen](https://github.com/andergl/SpainSkills2024-public/assets/52236484/35bc7446-ab29-4ba3-bf28-26a4b326afa9)
 
 
-## 2.3. Configurar servidor web apache2 (creación de un VirtualHost)
+## 2.4. Configurar servidor web apache2 (creación de un VirtualHost)
 
 - En la máquina ansiblesrv, nos ubicamos en el directorio en el que van a estar los playbooks, en nuestro caso, /etc/ansible:
 ```sh
