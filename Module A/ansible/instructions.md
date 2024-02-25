@@ -210,7 +210,7 @@ ansible-playbook ping_all.yml
 nano hostname.yml
 ```
 
-- El playbook renombra cada equipo con el nombre {{ hostname }} que tiene definido en el archivo /etc/ansible/hosts. Esto modifica el contenido del archivo /etc/hostname de las máquinas destino. No es obligatorio, pero como el cambio no se refleja en el prompt hasta el siguiente reinicio, reinicia las máquinas:
+- El playbook renombra cada equipo con el nombre {{ hostname }} que tiene definido en el archivo /etc/ansible/hosts. Esto modifica el contenido del archivo /etc/hostname de las máquinas destino:
 
 ```sh
 - name: Change hostname
@@ -219,9 +219,6 @@ nano hostname.yml
     - name: Set hostname
       ansible.builtin.hostname:
         name: "{{ hostname }}"
-      become: true
-    - name: "Reinicio"
-      reboot:
       become: true
 ```
 
